@@ -5,7 +5,7 @@ on:
   pull_request:
 
 env:
-  SELF_NOMAD_VERSION: "1.4.0"
+  SELF_NOMAD_VERSION: "1.4.1"
 
 jobs:
   index:

@@ -5,15 +5,21 @@
   <title>Portable Agent Registry</title>
 </head>
 <body>
-  <h1>Portable Agent Registry 0.1.0</h1>
+  <h1>Portable Agent Registry 0.2.0</h1>
   <p>Read-only catalog of specialist <code>self-nomad-pack-v1</code> snapshots.
-  No accounts, upload, or reputation scores.</p>
+  No accounts, upload API, payments, or reputation scores.</p>
+  <p>self-nomad does not host this index. <code>hub publish</code> writes a
+  checked <code>.snpack</code> for a human pull request. <code>hub pull</code>
+  runs <code>pack --check</code>, then <code>install</code>.</p>
+  <p>Index URL for self-nomad 1.4.1:</p>
+  <pre>https://raw.githubusercontent.com/v-t-r-gg/portable-agent-registry/main/index.json</pre>
   <ul>
-    <li><a href="../packages/demo-echo/1.0.0/demo-echo.snpack">demo-echo</a> — Repeats the operator's last sentence. Proves the pack pipe.</li>
-    <li><a href="../packages/research-summarizer/1.0.0/research-summarizer.snpack">research-summarizer</a> — Turns source notes into a short brief without personal memory.</li>
-    <li><a href="../packages/code-reviewer/1.0.0/code-reviewer.snpack">code-reviewer</a> — Reviews a diff for correctness and missing tests.</li>
+    <li><a href="https://raw.githubusercontent.com/v-t-r-gg/portable-agent-registry/main/packages/demo-echo/1.0.0/demo-echo.snpack">demo-echo</a> — Repeats the operator's last sentence. Proves the pack pipe.</li>
+    <li><a href="https://raw.githubusercontent.com/v-t-r-gg/portable-agent-registry/main/packages/research-summarizer/1.0.0/research-summarizer.snpack">research-summarizer</a> — Turns source notes into a short brief without personal memory.</li>
+    <li><a href="https://raw.githubusercontent.com/v-t-r-gg/portable-agent-registry/main/packages/code-reviewer/1.0.0/code-reviewer.snpack">code-reviewer</a> — Reviews a diff for correctness and missing tests.</li>
   </ul>
-  <p>Install with <code>self-nomad install ARCHIVE --to NEW_REPO</code>,
+  <p>Install with <code>self-nomad hub pull NAME --to NEW_REPO</code>
+  or <code>self-nomad install ARCHIVE --to NEW_REPO</code>,
   then <code>self-nomad restore</code> into Hermes or OpenClaw.</p>
 </body>
 </html>

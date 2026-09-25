@@ -6,7 +6,7 @@ pretend there is a marketplace.
 ## In scope
 
 - Keep [CONCEPT.md](../CONCEPT.md) as the product north star.
-- Pin self-nomad 1.4.0 in CI (1.1.0 remains the minimum; seed packs are not rebuilt; tags `v0.1.0` and `v1.1.0` are not rewritten).
+- Pin self-nomad 1.4.1 in CI (1.1.0 remains the minimum; seed packs are not rebuilt; tags `v0.1.0` and `v1.1.0` are not rewritten).
 - Host 3–5 specialist `.snpack` files produced by `self-nomad pack`.
 - Publish `index.json` ([index-format.md](index-format.md)) and a one-page static listing.
 - CI installs the pinned self-nomad wheel and runs `self-nomad pack --check`,
@@ -32,6 +32,6 @@ self-nomad `hub publish` writes a specialist `.snpack` after `pack --check`. A h
 
 ## Next phase
 
-The 0.1.0 gate was a static catalog, a 1.1.1 CI pin, and seed checks. CI now installs self-nomad 1.4.0. The three seed digests and `self_nomad_min` 1.1.0 are unchanged.
+The 0.1.0 gate was a static catalog, a 1.1.1 CI pin, and seed checks. CI now installs self-nomad 1.4.1. The three seed digests and `self_nomad_min` 1.1.0 are unchanged. Operators set `SELF_NOMAD_INDEX_URL` to `https://raw.githubusercontent.com/v-t-r-gg/portable-agent-registry/main/index.json`.
 
 Phase 1 (accounts, web upload, search, reputation) is not this tree.

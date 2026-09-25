@@ -41,9 +41,10 @@ The registry **consumes** self-nomad. It does not vendor a second validator.
    install) or `self-nomad install`, then `restore`.
 
 self-nomad does not host, search, or authenticate to this index. The optional
-`hub` extra only moves an already-checked archive. Name lookup reads a local
-`index.json`. Relative `pack` paths in this catalog are not fetched from the
-raw GitHub URL of the index.
+`hub` extra only moves an already-checked archive. With self-nomad 1.4.1, a
+relative `pack` path is joined to the directory of `SELF_NOMAD_INDEX_URL`.
+`..` is refused. The catalog URL is
+`https://raw.githubusercontent.com/v-t-r-gg/portable-agent-registry/main/index.json`.
 
 ## Publish profile (constraints on packages we will index)
 
