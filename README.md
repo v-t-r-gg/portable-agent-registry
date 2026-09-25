@@ -41,7 +41,7 @@ self-nomad --repo ./echo restore --adapter hermes --to "$HERMES_HOME" --yes
 self-nomad --repo ./echo restore --adapter openclaw --to "$OPENCLAW_WORKSPACE" --yes
 ```
 
-CI installs self-nomad 1.1.0 and runs those checks. It does not reimplement validation.
+CI installs self-nomad 1.1.1 and runs those checks. It does not reimplement validation. Seed packs were built with 1.1.0; `self_nomad_min` stays 1.1.0.
 
 ## License
 

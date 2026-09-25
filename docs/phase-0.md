@@ -6,7 +6,7 @@ pretend there is a marketplace.
 ## In scope
 
 - Keep [CONCEPT.md](../CONCEPT.md) as the product north star.
-- Pin self-nomad 1.1.0.
+- Pin self-nomad 1.1.1 in CI (1.1.0 remains the minimum; tag `v1.1.0` is not rewritten).
 - Host 3–5 specialist `.snpack` files produced by `self-nomad pack`.
 - Publish `index.json` ([index-format.md](index-format.md)) and a one-page static listing.
 - CI installs the pinned self-nomad wheel and runs `self-nomad pack --check`,
@@ -30,7 +30,7 @@ those commands. It is not missing export/import commands.
 
 Phase 1 (public publish / search / download) starts only after 0.1.0:
 
-- the pinned self-nomad release is 1.1.0
+- CI pins self-nomad 1.1.1 (minimum remains 1.1.0)
 - seed packs restore into Hermes and OpenClaw
 - CI has run `pack --check`, `install`, and `validate --strict` on those seeds
 

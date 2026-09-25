@@ -110,8 +110,8 @@ def main() -> int:
         print("self-nomad is not on PATH", file=sys.stderr)
         return 1
     version = subprocess.run([cli, "--version"], check=True, capture_output=True, text=True).stdout.strip()
-    if version != "1.1.0":
-        print(f"refusing to pack seeds with self-nomad {version}; need 1.1.0", file=sys.stderr)
+    if version not in {"1.1.0", "1.1.1"}:
+        print(f"refusing to pack seeds with self-nomad {version}; need 1.1.0 or 1.1.1", file=sys.stderr)
         return 1
     packages: list[dict[str, object]] = []
     with tempfile.TemporaryDirectory(prefix="par-seeds-") as temporary:
