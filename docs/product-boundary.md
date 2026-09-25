@@ -30,16 +30,20 @@ the same decisions.
 
 The registry **consumes** self-nomad. It does not vendor a second validator.
 
-1. A publisher produces a credential-free `self-nomad-pack-v1` snapshot with
-   `self-nomad pack` (specialist profile by default). The snapshot is not a
-   Git clone. Proposal receipts and working Git history are not in it.
-2. Registry CI runs `self-nomad pack --check`, `self-nomad install` into a
-   temp directory, and `self-nomad validate --strict` on the artifact.
-3. A consumer downloads the snapshot, runs `self-nomad install`, then
-   `self-nomad restore` into Hermes or OpenClaw.
+1. A publisher runs `self-nomad --repo ./agent hub publish --drop ./agent.snpack`
+   (or `pack`, then `pack --check`). That writes a specialist snapshot after
+   the check. It is not a Git clone. A personal pack is refused unless
+   `--yes-personal` is set. Nothing is uploaded.
+2. A human adds that file under `packages/<name>/<version>/` and updates
+   `index.json`. Registry CI runs `self-nomad pack --check`, `install` into
+   a temp directory, and `validate --strict`.
+3. A consumer runs `self-nomad hub pull ARCHIVE --to NEW_REPO` (check, then
+   install) or `self-nomad install`, then `restore`.
 
-self-nomad does not host, search, publish, or authenticate to this index.
-Hub-client commands do not belong in the self-nomad core CLI.
+self-nomad does not host, search, or authenticate to this index. The optional
+`hub` extra only moves an already-checked archive. Name lookup reads a local
+`index.json`. Relative `pack` paths in this catalog are not fetched from the
+raw GitHub URL of the index.
 
 ## Publish profile (constraints on packages we will index)
 

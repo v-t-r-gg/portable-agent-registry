@@ -13,9 +13,9 @@ toolkit to validate, index, and later host credential-free snapshots.
 | [self-nomad](https://github.com/v-t-r-gg/self-nomad) | Govern and move one agent's self on a trusted machine |
 | This repository | Discover, host, and distribute many untrusted packages |
 
-A registry install/export loop, when it exists, will call self-nomad primitives
-(validate, snapshot export, snapshot import, runtime restore). It will not
-reimplement validation or turn the CLI into a marketplace client.
+Publish is a checked file dropped into this tree by a human pull request.
+Install calls self-nomad. This repository does not reimplement validation
+and it does not accept a web upload.
 
 See [docs/product-boundary.md](docs/product-boundary.md).
 
@@ -41,7 +41,27 @@ self-nomad --repo ./echo restore --adapter hermes --to "$HERMES_HOME" --yes
 self-nomad --repo ./echo restore --adapter openclaw --to "$OPENCLAW_WORKSPACE" --yes
 ```
 
-CI installs self-nomad 1.1.1 and runs those checks. It does not reimplement validation. Seed packs were built with 1.1.0; `self_nomad_min` stays 1.1.0.
+CI installs self-nomad 1.4.0 from the git tag and runs those checks. It does not reimplement validation. Seed packs were built with 1.1.0; `self_nomad_min` stays 1.1.0. Tag `v0.1.0` is not rewritten.
+
+## Pull and publish
+
+self-nomad 1.4.0 can move a pack. This registry still has no upload API.
+
+Pull a `.snpack` path or URL. `hub pull` runs `pack --check` before `install`:
+
+```bash
+self-nomad hub pull packages/demo-echo/1.0.0/demo-echo.snpack --to ./echo
+```
+
+Name lookup reads a local index (`SELF_NOMAD_INDEX_URL` as a `file://` URL). Relative `pack` paths resolve next to that file. They are not resolved against the raw GitHub URL of `index.json`. Pass the archive URL itself when you are not in a checkout.
+
+Publish writes a file. It does not upload, and it refuses a personal-profile pack unless `--yes-personal` is set:
+
+```bash
+self-nomad --repo ./agent hub publish --drop ./agent.snpack
+```
+
+Open a pull request that adds that file under `packages/<name>/<version>/` and updates `index.json`. Do not commit a working Git clone. CI runs `pack --check` again.
 
 ## License
 
