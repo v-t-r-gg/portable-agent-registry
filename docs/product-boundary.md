@@ -22,20 +22,24 @@ the same decisions.
 - Structural validation, secret scanning, and path rules
 - Local proposal governance (materialize → validate → approve → apply)
 - Runtime adapters (Hermes, OpenClaw, later others)
-- Local snapshot export/import, when those commands exist
+- Local snapshot commands: `self-nomad pack`, `self-nomad pack --check`,
+  `self-nomad install`, and `self-nomad restore`
+- `self-nomad validate --strict`
 
 ## How integration works
 
 The registry **consumes** self-nomad. It does not vendor a second validator.
 
-1. A publisher produces a credential-free snapshot with self-nomad.
-2. Registry CI and upload checks run `self-nomad validate --strict` (and later
-   snapshot check commands) on the artifact.
-3. A consumer downloads the snapshot and imports it with self-nomad, then
-   restores into a runtime.
+1. A publisher produces a credential-free `self-nomad-pack-v1` snapshot with
+   `self-nomad pack` (specialist profile by default). The snapshot is not a
+   Git clone. Proposal receipts and working Git history are not in it.
+2. Registry CI runs `self-nomad pack --check`, `self-nomad install` into a
+   temp directory, and `self-nomad validate --strict` on the artifact.
+3. A consumer downloads the snapshot, runs `self-nomad install`, then
+   `self-nomad restore` into Hermes or OpenClaw.
 
-self-nomad does not host, search, or authenticate to this index. Hub-client
-commands do not belong in the self-nomad core CLI.
+self-nomad does not host, search, publish, or authenticate to this index.
+Hub-client commands do not belong in the self-nomad core CLI.
 
 ## Publish profile (constraints on packages we will index)
 
@@ -51,7 +55,6 @@ commands do not belong in the self-nomad core CLI.
 
 ## Phase 0 implication
 
-Do not stand up a public upload service until self-nomad can export and
-import a validated snapshot and those commands have been used on seed
-packages. Until then this repository holds the concept, the boundary, and
-later a static index.
+`pack` and `install` exist. Phase 0 is a static index of specialist seed
+packs plus CI that calls self-nomad. Do not stand up a public upload service
+in this phase.

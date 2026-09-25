@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+env:
+  SELF_NOMAD_VERSION: "1.1.0"
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pinned self-nomad wheel
+        run: |
+          set -euo pipefail
+          if [ -n "${SELF_NOMAD_WHEEL:-}" ]; then
+            python -m pip install "${SELF_NOMAD_WHEEL}"
+          else
+            python -m pip install "self-nomad @ git+https://github.com/v-t-r-gg/self-nomad.git@v${SELF_NOMAD_VERSION}"
+          fi
+          self-nomad --version
+          test "$(self-nomad --version)" = "${SELF_NOMAD_VERSION}"
+      - name: Validate index with self-nomad
+        run: python scripts/validate_index.py

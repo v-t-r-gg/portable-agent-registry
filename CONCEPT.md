@@ -10,7 +10,7 @@ a separate product. Integration notes: [docs/product-boundary.md](docs/product-b
 
 ## 1. Vision
 
-A public registry where anyone can publish, discover, and install complete, versioned AI agent packages. Each package contains the agent’s durable identity, curated memory, skills, and behavioral constraints in a clean, Git-based format. Packages travel between runtimes without credentials or session state. A portable reputation ledger travels with every package so other agents and humans can evaluate trustworthiness before use.
+A public registry where anyone can publish, discover, and install complete, versioned AI agent packages. Each package is a credential-free `self-nomad-pack-v1` snapshot of durable identity, curated memory, skills, and behavioral constraints. It is not a Git clone and it does not contain proposal receipts or working Git history. Packages travel between runtimes without credentials or session state. A reputation feed may later be published by the registry beside a package. It is not stored inside the snapshot.
 
 The site functions as the Hugging Face of portable agent selves: open, searchable, machine-readable first, and designed for both human browsers and agent-to-agent discovery.
 
@@ -20,33 +20,32 @@ Today’s agent sharing landscape is fragmented and incomplete:
 
 - Most marketplaces lock agents to a single platform (GPT Store, Copilot Agent Store, vendor-specific builders).
 - Personality-focused sites exist (SOULHUB, agentsoul.market) but remain small and limited to lightweight persona files.
-- Full agent packages that include memory, skills, and governance history rarely travel cleanly between runtimes.
+- Full agent packages that include memory and skills rarely travel cleanly between runtimes.
 - Reputation is either absent or tied to a closed platform, so an agent that performs well in one environment carries no verifiable history elsewhere.
 - Local-first and edge agents (phone, laptop, personal servers) lack a neutral place to publish and discover specialist packages.
 
 ## 3. Proposed Solution
 
-Build an open registry that treats a self-nomad-style Git repository as the atomic unit of exchange. A published agent package is a content-addressed, credential-free snapshot containing:
+Build an open registry whose unit of exchange is a `self-nomad-pack-v1` snapshot, not a Git clone and not the author's working history. A published agent package is a content-addressed, credential-free archive containing:
 
-- Identity – name, description, intended tasks, version, author
-- Curated memory – durable facts, preferences, and learned patterns the agent carries
-- Skills & tools – declarations of capabilities and tool interfaces
-- Behavioral constraints – system prompt fragments, policy boundaries, safety rules
-- Governance history – the proposal/approval trail that produced the current state
+- Identity – `self.id`, `self.name`, and `self.description` from the tree, copied into the pack sidecar until a schema bump adds more fields
+- Curated memory – only what the specialist profile allows. User profile and daily memory are omitted. Long-term memory is opt-in and, on current self-nomad, limited to `memory/PUBLISH.md`
+- Skills and tool notes – declarations of capabilities
+- Behavioral constraints – persona, instructions, and policy files that are part of the portable tree
 
-A portable reputation ledger attaches to each package. Signed outcome records (success, failure, cost, human corrections) accumulate over time and remain visible wherever the package is used.
+Proposal records, intake receipts, and working Git history are not in the artifact. A registry that later wants an audit trail owns that feed itself. A reputation ledger is a later phase. It is not part of the 0.1.0 package.
 
 ## 4. Core Building Blocks
 
 ### 4.1 Self-Nomad Package Format
 
-The registry adopts the self-nomad model as its native package format. self-nomad is a local-first Python toolkit that places an agent’s durable identity, curated memory, and skills under Git version control. Changes move through a typed proposal workflow (materialize → validate → approve → apply). Credentials and runtime session data never enter the repository.
+The registry adopts the self-nomad snapshot as its native package format. self-nomad is a local-first Python toolkit. On a trusted machine it keeps durable identity, curated memory, and skills under Git, and changes move through a typed proposal workflow. Credentials and runtime session data never enter the repository. That Git history stays local.
 
-A published package is simply a validated Git tree (or content-addressed snapshot of that tree) that any compatible runtime can restore transactionally.
+A published package is a `self-nomad-pack-v1` gzip tar produced by `self-nomad pack` (specialist profile by default). `self-nomad pack --check` and `self-nomad install` validate it. `self-nomad validate --strict` is the tree check those commands run. `self-nomad restore` copies mapped files into Hermes or OpenClaw. The indexable identity is `self.id`, `self.name`, `self.description`, and the pack sidecar until a self-nomad schema bump.
 
 ### 4.2 Portable Reputation Ledger
 
-Every package carries a cryptographically signed history of verified outcomes. Records include:
+A later phase may publish a signed feed of verified outcomes next to a package. The feed is registry data. It is not a member of the snapshot. Records would include:
 
 - Task category and success/failure
 - Measured cost (tokens, latency, external spend)
@@ -65,9 +64,11 @@ The ledger can begin as a simple signed feed mirrored by the registry and later 
 
 ### Publishing
 
-- CLI and web upload of a validated self-nomad repository
-- Automatic extraction of identity, skill summary, and memory highlights for indexing
-- Versioning that preserves the full proposal history
+Phase 0 does not upload. A publisher runs `self-nomad pack` on a trusted machine and the registry stores the resulting `.snpack`. There is no web upload and no registry publish CLI in 0.1.0.
+
+- Index fields come from `self-nomad pack --check --json`: profile, digest, skill names, and the sidecar identity
+- Specialist profile is the default. Personal archives are not listed
+- Proposal history is not versioned inside the package. Later registry phases may attach their own attestation feed
 
 ### Installation & Runtime Integration
 
@@ -105,7 +106,7 @@ Multiple agent marketplaces already operate. OpenAI’s GPT Store has over three
 
 Enterprise and local-agent growth further increases the need. Hundreds of thousands of business agents already run in production. Forecasts show rapid expansion of the agentic AI market. Personal agents on devices continue to multiply, creating demand for packages that move cleanly between runtimes.
 
-The open gap is a neutral, Git-native registry that treats full agent state (identity + memory + skills + governance) as a first-class, reputation-bearing package. Existing sites prove the desire to share and reuse; the proposed registry supplies the missing portability and verifiable history layer.
+The open gap is a neutral registry of credential-free self-nomad snapshots (identity, allowed memory, and skills). Existing sites prove the desire to share and reuse. Reputation and public upload are later phases, not part of the snapshot.
 
 ## 8. Competitive Landscape
 
@@ -120,15 +121,15 @@ No current platform combines a self-nomad-style immutable package format, portab
 
 ## 9. Minimum Viable Product
 
-The first public release focuses on the smallest useful loop:
+Release 0.1.0 is a read-only catalog, not a marketplace:
 
-- Accept a validated self-nomad Git repository (or tarball of its tree) via CLI or simple web form.
-- Extract and index identity, skill list, and short memory summary.
-- Expose a searchable web UI and a machine-readable API.
-- Allow any visitor to download the package and restore it with the self-nomad CLI.
-- Attach a basic signed reputation feed (initially manual or CLI-submitted outcome records).
+- Pin self-nomad 1.1.0.
+- Host 3–5 specialist `.snpack` files plus `index.json`.
+- CI installs that self-nomad wheel and runs `self-nomad pack --check`, `self-nomad install` into a temp directory, and `self-nomad validate --strict`. It does not reimplement validation.
+- A single static page lists the index.
+- Download is the raw file URL. Install instructions point at `self-nomad install` and `self-nomad restore`.
 
-No payments, no complex governance UI, no multi-runtime adapters beyond the existing self-nomad ones. The goal is to prove that people will publish and that others will install.
+No accounts, payments, web upload, remote MCP, reputation scores, or registry publish command. Search and a reputation feed are Phase 1 and later. The goal of 0.1.0 is to prove that a stranger can install a listed specialist pack and restore it.
 
 ## 10. Roadmap Sketch
 
@@ -155,10 +156,9 @@ No payments, no complex governance UI, no multi-runtime adapters beyond the exis
 
 ## 13. Immediate Next Steps
 
-- Finalize the exact package manifest schema that the registry will index.
-- Implement a minimal publish + search + download loop on top of existing self-nomad repositories.
-- Seed the index with a first wave of high-quality packages.
-- Expose a simple machine-readable endpoint so early agent experiments can query it.
-- Document the end-to-end flow for both human publishers and agent consumers.
+- Index the pack sidecar fields self-nomad 1.1.0 already emits (`self.id`, name, description, digest, skills, profile).
+- Keep 0.1.0 a static index of specialist snapshots. Do not add upload or search in this release.
+- Seed the index with packs produced by `self-nomad pack`.
+- Point install docs at `self-nomad install` and `self-nomad restore`.
 
 This registry turns the portable, immutable agent self into a first-class, discoverable object. It gives local and edge agents a neutral place to find specialists, and it gives creators a place to publish work that can outlive any single runtime.

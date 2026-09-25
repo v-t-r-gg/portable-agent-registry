@@ -1,0 +1,54 @@
+{
+  "index_schema": 0,
+  "self_nomad_min": "1.1.0",
+  "packages": [
+    {
+      "name": "demo-echo",
+      "self_id": "d38cb55a-a7ad-4848-ae43-f515552e931e",
+      "description": "Repeats the operator's last sentence. Proves the pack pipe.",
+      "profile": "specialist",
+      "pack": "packages/demo-echo/1.0.0/demo-echo.snpack",
+      "content_digest": "sha256:b8a5d6dd7d2eccc19052988c648b90f50b1a5d614c305acbf5fa9496678c9068",
+      "skills": [
+        "echo"
+      ],
+      "runtimes_tested": [
+        "hermes",
+        "openclaw"
+      ],
+      "packer_version": "1.1.0"
+    },
+    {
+      "name": "research-summarizer",
+      "self_id": "14a91b4c-86a6-4b62-a184-5bb160c73efe",
+      "description": "Turns source notes into a short brief without personal memory.",
+      "profile": "specialist",
+      "pack": "packages/research-summarizer/1.0.0/research-summarizer.snpack",
+      "content_digest": "sha256:074579a508dae9e6dd5f29b34e1f64833bdd5fa326b5c299f495ac5e0e51aeef",
+      "skills": [
+        "summarize"
+      ],
+      "runtimes_tested": [
+        "hermes",
+        "openclaw"
+      ],
+      "packer_version": "1.1.0"
+    },
+    {
+      "name": "code-reviewer",
+      "self_id": "facd82f0-19be-42cf-b7fb-896f56eead2f",
+      "description": "Reviews a diff for correctness and missing tests.",
+      "profile": "specialist",
+      "pack": "packages/code-reviewer/1.0.0/code-reviewer.snpack",
+      "content_digest": "sha256:ac08ccab15bcdb7005a6e4bfb26e9b26cdf3a92bf240fc072ba3bf39c3bda05d",
+      "skills": [
+        "review-diff"
+      ],
+      "runtimes_tested": [
+        "hermes",
+        "openclaw"
+      ],
+      "packer_version": "1.1.0"
+    }
+  ]
+}

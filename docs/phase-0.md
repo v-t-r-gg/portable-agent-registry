@@ -6,12 +6,11 @@ pretend there is a marketplace.
 ## In scope
 
 - Keep [CONCEPT.md](../CONCEPT.md) as the product north star.
-- Pin a self-nomad release and document the validate command this repo will
-  invoke.
-- Collect 3–5 specialist seed packages produced as credential-free snapshots
-  (after self-nomad ships export).
-- Publish a static machine-readable index (JSON) and a one-page listing.
-- Run self-nomad validation in CI on every seed.
+- Pin self-nomad 1.1.0.
+- Host 3–5 specialist `.snpack` files produced by `self-nomad pack`.
+- Publish `index.json` ([index-format.md](index-format.md)) and a one-page static listing.
+- CI installs the pinned self-nomad wheel and runs `self-nomad pack --check`,
+  `self-nomad install` into a temp directory, and `self-nomad validate --strict`.
 
 ## Out of scope
 
@@ -23,13 +22,16 @@ pretend there is a marketplace.
 
 ## Blocked on self-nomad
 
-Export/import snapshot commands and the publish profile in ADR 0007. Until
-those exist, seeds are hand-validated trees only, not installable packages.
+`pack`, `pack --check`, and `install` exist as of self-nomad 1.0.0 and are
+hardened in 1.1.0. The remaining work is seed packs plus CI that consumes
+those commands. It is not missing export/import commands.
 
 ## Next phase
 
-Phase 1 (public publish / search / download) starts only after:
+Phase 1 (public publish / search / download) starts only after 0.1.0:
 
-- self-nomad snapshot export and import are released
-- seeds restore cleanly into Hermes and OpenClaw
-- untrusted-snapshot validation has been run on those seeds
+- the pinned self-nomad release is 1.1.0
+- seed packs restore into Hermes and OpenClaw
+- CI has run `pack --check`, `install`, and `validate --strict` on those seeds
+
+Phase 1 is not part of this repository's 0.1.0 tree.
